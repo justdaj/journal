@@ -62,7 +62,7 @@ $totalPages = ceil($totalEntries / $limit);
     </header>
     <main>
         <form method="POST" action="index.php">
-            <label for="content">Journal Entry</label>
+            <label class="hidden" for="content">Journal Entry</label>
             <textarea id="content" rows="6" name="content" required placeholder="Today I..."></textarea>
             
             <div class="inline">
@@ -78,7 +78,7 @@ $totalPages = ceil($totalEntries / $limit);
                 </div>
 
                 <div>
-                    <label for="tags">Tags (comma-separated)</label>
+                    <label for="tags">Tag(s)</label>
                     <input type="text" id="tags" name="tags" placeholder="work, personal">
                 </div>
             </div>
