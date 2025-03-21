@@ -65,3 +65,51 @@ button.delete:hover {
 span.disabled {
     opacity: 0.3;
 }
+
+.inline {
+    display: flex;
+    gap: 20px; /* Adds spacing between mood and tags */
+    align-items: flex-start;
+    width: 100%; /* Ensures the full width is used */
+    padding-bottom: 1rem;
+}
+
+.inline div {
+    display: flex;
+    flex-direction: column; /* Stacks label and input/select vertically */
+    flex: 1; /* Allows the divs to grow */
+}
+
+.inline select {
+    flex: 0 1 auto; /* Keeps dropdown at its natural width */
+}
+
+.inline input {
+    flex: 1; /* Takes up remaining space */
+    min-width: 150px; /* Ensures it doesn't shrink too much */
+    width: 100%; /* Ensures it expands within the div */
+}
+
+hr {
+    margin: 3rem auto 4rem auto;
+    max-width: 80%;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+.tag-cloud a {
+    font-size: 1.25rem !important;
+    margin: 5px;
+    display: inline-block;
+}
+
+.tag-cloud a::before {
+    content: "#";
+}
+
+.delete-container {
+    display: flex;
+    justify-content: flex-end;
+}

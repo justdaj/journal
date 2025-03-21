@@ -1,131 +1,152 @@
 <?php
-// Load configuration
-$config = require 'config.php';
-$default_title = $config['title'];
-$default_description = $config['description'];
+// Database connection
+$db = new PDO('sqlite:journal.db');
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Include Parsedown
-require 'Parsedown.php';
+// Create tables if they don't exist
+$db->exec("CREATE TABLE IF NOT EXISTS entries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+    content TEXT NOT NULL,
+    mood TEXT CHECK( mood IN ('🙃 Happy', '😞 Sad', '😏 Neutral', '😡 Angry', '🤪 Excited') )
+);
 
-function handleJournalEntry() {
-    global $success_message, $page_title, $default_title;
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['content'])) {
-        $content = $_POST['content']; // No htmlspecialchars here
-        $date = date('Y-m-d-His'); // Include seconds
-        $timestamp = date('Y-m-d H:i:s'); // Display seconds in timestamp
-        $content_with_metadata = "$timestamp\n\n$content";
-        $directory = 'entries/';
-        $filename = "{$date}.txt";
+CREATE TABLE IF NOT EXISTS tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL
+);
 
-        if (!is_dir($directory)) {
-            mkdir($directory, 0777, true);
-        }
+CREATE TABLE IF NOT EXISTS entry_tags (
+    entry_id INTEGER,
+    tag_id INTEGER,
+    PRIMARY KEY (entry_id, tag_id),
+    FOREIGN KEY (entry_id) REFERENCES entries(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);");
 
-        file_put_contents($directory . $filename, $content_with_metadata);
-        $success_message = "<p>Entry saved successfully!</p>";
+// Function to add an entry
+function addEntry($content, $mood, $tags) {
+    global $db;
+    
+    // Insert entry
+    $stmt = $db->prepare("INSERT INTO entries (content, mood) VALUES (:content, :mood)");
+    $stmt->execute([':content' => $content, ':mood' => $mood]);
+    $entryId = $db->lastInsertId();
+    
+    // Process tags
+    foreach ($tags as $tag) {
+        // Insert tag if it doesn't exist
+        $stmt = $db->prepare("INSERT INTO tags (name) VALUES (:name) ON CONFLICT(name) DO NOTHING");
+        $stmt->execute([':name' => $tag]);
+        
+        // Get tag ID
+        $stmt = $db->prepare("SELECT id FROM tags WHERE name = :name");
+        $stmt->execute([':name' => $tag]);
+        $tagId = $stmt->fetchColumn();
+        
+        // Link tag to entry
+        $stmt = $db->prepare("INSERT INTO entry_tags (entry_id, tag_id) VALUES (:entry_id, :tag_id)");
+        $stmt->execute([':entry_id' => $entryId, ':tag_id' => $tagId]);
     }
 }
 
-function renderMarkdown($text) {
-    $Parsedown = new Parsedown();
-    return $Parsedown->text($text);
+// Function to retrieve entries with tags
+function getEntries($limit = 10, $offset = 0) {
+    global $db;
+    
+    $stmt = $db->prepare("SELECT e.id, e.timestamp, e.content, e.mood, GROUP_CONCAT(t.name) AS tags 
+                          FROM entries e 
+                          LEFT JOIN entry_tags et ON e.id = et.entry_id 
+                          LEFT JOIN tags t ON et.tag_id = t.id 
+                          GROUP BY e.id 
+                          ORDER BY e.timestamp DESC 
+                          LIMIT :limit OFFSET :offset");
+    
+    // Bind values correctly as integers
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Extract the full timestamp - assumes format YYYY-MM-DD-HHMMSS.txt
-function extractFullTimestamp($filename) {
-    $matches = [];
-    if (preg_match('/(\d{4}-\d{2}-\d{2})-(\d{6})/', $filename, $matches)) {
-        $date = $matches[1];
-        $time = substr($matches[2], 0, 2) . ':' . substr($matches[2], 2, 2) . ':' . substr($matches[2], 4, 2); // HH:MM:SS
-        return $date . ' ' . $time;
+// Function to get total entry count
+function getEntryCount() {
+    global $db;
+    return $db->query("SELECT COUNT(*) FROM entries")->fetchColumn();
+}
+
+// Function to retrieve a single entry by ID
+function getEntryById($id) {
+    global $db;
+    
+    $stmt = $db->prepare("SELECT e.id, e.timestamp, e.content, e.mood, GROUP_CONCAT(t.name) AS tags 
+                          FROM entries e 
+                          LEFT JOIN entry_tags et ON e.id = et.entry_id 
+                          LEFT JOIN tags t ON et.tag_id = t.id 
+                          WHERE e.id = :id GROUP BY e.id");
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+// Function to update an entry
+function updateEntry($id, $content, $mood, $tags) {
+    global $db;
+    
+    // Update entry content and mood
+    $stmt = $db->prepare("UPDATE entries SET content = :content, mood = :mood WHERE id = :id");
+    $stmt->execute([':content' => $content, ':mood' => $mood, ':id' => $id]);
+    
+    // Remove existing tags
+    $stmt = $db->prepare("DELETE FROM entry_tags WHERE entry_id = :id");
+    $stmt->execute([':id' => $id]);
+    
+    // Process new tags
+    foreach ($tags as $tag) {
+        $stmt = $db->prepare("INSERT INTO tags (name) VALUES (:name) ON CONFLICT(name) DO NOTHING");
+        $stmt->execute([':name' => $tag]);
+        
+        $stmt = $db->prepare("SELECT id FROM tags WHERE name = :name");
+        $stmt->execute([':name' => $tag]);
+        $tagId = $stmt->fetchColumn();
+        
+        $stmt = $db->prepare("INSERT INTO entry_tags (entry_id, tag_id) VALUES (:entry_id, :tag_id)");
+        $stmt->execute([':entry_id' => $id, ':tag_id' => $tagId]);
     }
-    return 'Unknown Date';
 }
 
-// Extract timestamp from the filename; used to display the time without seconds on the entry list
-function extractTimestamp($filename) {
-    $matches = [];
-    if (preg_match('/(\d{4}-\d{2}-\d{2})-(\d{6})/', $filename, $matches)) {
-        $date = $matches[1];
-        $time = substr($matches[2], 0, 2) . ':' . substr($matches[2], 2, 2); // HH:MM
-        return $date . ' ' . $time;
-    }
-    return 'Unknown Date';
+// Function to delete an entry
+function deleteEntry($id) {
+    global $db;
+    
+    $stmt = $db->prepare("DELETE FROM entries WHERE id = :id");
+    $stmt->execute([':id' => $id]);
 }
 
-// List all entries in the entries directory on the homepage
-function listEntries() {
-    $directory = 'entries/';
-    $entries = [];
-
-    if (is_dir($directory)) {
-        $files = scandir($directory);
-        foreach ($files as $file) {
-            if ($file !== '.' && $file !== '..') {
-                $full_timestamp = extractFullTimestamp($file); // Use the full timestamp with seconds for sorting
-                $display_timestamp = extractTimestamp($file);  // Use the trimmed timestamp for display
-                $date_key = extractMonthYear($file); // Group by month and year
-                if ($full_timestamp !== 'Unknown Date') {
-                    $entries[$date_key][] = [
-                        'file' => htmlspecialchars($file),
-                        'timestamp' => $full_timestamp,     // Full timestamp for sorting
-                        'display_timestamp' => $display_timestamp // Trimmed timestamp for display
-                    ];
-                }
-            }
-        }
-
-        // Sort entries by month and year in reverse order (most recent first)
-        krsort($entries);
-
-        // Sort each month's entries by full timestamp in reverse chronological order, including seconds
-        foreach ($entries as $monthYear => &$entriesByMonth) {
-            usort($entriesByMonth, function($a, $b) {
-                $dateA = DateTime::createFromFormat('Y-m-d H:i:s', $a['timestamp']);
-                $dateB = DateTime::createFromFormat('Y-m-d H:i:s', $b['timestamp']);
-                return $dateB <=> $dateA; // Most recent first
-            });
-        }
-        unset($entriesByMonth); // Break reference to the last element
-    }
-
-    return $entries;
+// Function to retrieve entries by tag
+function getEntriesByTag($tag, $limit = 10, $offset = 0) {
+    global $db;
+    $stmt = $db->prepare("SELECT e.id, e.timestamp, e.content, e.mood, GROUP_CONCAT(t.name) AS tags 
+                          FROM entries e 
+                          JOIN entry_tags et ON e.id = et.entry_id 
+                          JOIN tags t ON et.tag_id = t.id 
+                          WHERE t.name = :tag 
+                          GROUP BY e.id ORDER BY e.timestamp DESC 
+                          LIMIT :limit OFFSET :offset");
+    $stmt->bindValue(':tag', $tag, PDO::PARAM_STR);
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Extract month and year from the filename, assumes format: YYYY-MM-DD-Hi.txt
-function extractMonthYear($filename) {
-    $matches = [];
-    if (preg_match('/(\d{4}-\d{2})/', $filename, $matches)) {
-        return $matches[1]; // Return YYYY-MM
-    }
-    return 'Unknown Month';
+// Tagcloud on homepage
+function getTagCloud() {
+    global $db;
+    $stmt = $db->query("SELECT t.name, COUNT(et.entry_id) AS count 
+                        FROM tags t 
+                        JOIN entry_tags et ON t.id = et.tag_id 
+                        GROUP BY t.name 
+                        ORDER BY count DESC");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-// Setup for next/prev entries
-function getAdjacentEntries($currentFile) {
-    $entries = listEntries(); // Get all entries
-    $allFiles = [];
-
-    // Flatten the array into a single list
-    foreach ($entries as $entriesByMonth) {
-        foreach ($entriesByMonth as $entry) {
-            $allFiles[] = $entry['file'];
-        }
-    }
-
-    // Find the current index
-    $currentIndex = array_search($currentFile, $allFiles);
-
-    // Determine next and previous entries
-    // Note: $prevFile will point to the next newer file, and $nextFile to the next older file
-    $prevFile = ($currentIndex < count($allFiles) - 1) ? $allFiles[$currentIndex + 1] : null;
-    $nextFile = ($currentIndex > 0) ? $allFiles[$currentIndex - 1] : null;
-
-    return [$prevFile, $nextFile];
-}
-
-// Main script execution
-handleJournalEntry();
-$page_title = $default_title;
-$page_description = $default_description;
-$entries = listEntries();
