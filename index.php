@@ -51,6 +51,9 @@ $totalPages = ceil($totalEntries / $limit);
     <link rel="apple-touch-icon" href="/icons/favicon.png">
     <link rel="icon" type="image/png" href="/icons/favicon.png" />
 
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
+
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
     <link rel="stylesheet" href="custom.css">
 </head>
