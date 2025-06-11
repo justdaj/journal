@@ -150,3 +150,11 @@ function getTagCloud() {
                         ORDER BY count DESC");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Fix timezone issue
+function formatTimestampForLocal(string $timestamp): string {
+    $config = require __DIR__ . '/config.php';
+    $dt = new DateTime($timestamp, new DateTimeZone('UTC'));
+    $dt->setTimezone(new DateTimeZone($config['timezone']));
+    return $dt->format('d F Y \a\t H:i');
+}

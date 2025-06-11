@@ -23,8 +23,9 @@ The hosting requirements are *extremely* simple. All that is needed is PHP suppo
 ## Getting started
 
 1. Fork or download the project
-2. Upload the project to your hosting provider
-3. Enjoy!
+2. Edit `config.php` to update your journal title, description and timezone (so timestamps are accurate). To update your timezone, use [this list](https://www.php.net/manual/en/timezones.php) of PHP timezones.
+3. Upload the project to your hosting provider
+4. Enjoy!
 
 Even though *Journal* requires SQLite, no configuration is needed. If no existing database is detected, then a new one will be automatically created when you publish your first entry.
 

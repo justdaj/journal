@@ -1,4 +1,6 @@
 <?php
+$config = require 'config.php';
+date_default_timezone_set($config['timezone']);
 require 'functions.php';
 require 'Parsedown.php';
 $Parsedown = new Parsedown();
@@ -47,7 +49,7 @@ $page_description = "Journal entries tagged as '" . htmlspecialchars($tag) . "'"
         <?php else: ?>
             <?php foreach ($entries as $entry): ?>
                 <article>
-                <h2><?php echo date('d F Y \a\t H:i', strtotime($entry['timestamp'])); ?></h2>
+                <h2><?php echo formatTimestampForLocal($entry['timestamp']); ?></h2>
 
                     <div><?php echo $Parsedown->text($entry['content']); ?></div>
                     <p><strong>Mood:</strong> <?php echo htmlspecialchars($entry['mood']); ?></p>

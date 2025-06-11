@@ -1,4 +1,8 @@
 <?php
+$config = require 'config.php';
+$page_title = $config['page_title'];
+$page_description = $config['page_description'];
+date_default_timezone_set($config['timezone']);
 require 'functions.php';
 require 'Parsedown.php';
 $Parsedown = new Parsedown();
@@ -47,8 +51,6 @@ $entries = [
     'On this day in previous years' => $previousYears
 ];
 
-$page_title = "On This Day";
-$page_description = "See what you wrote on this day in past weeks, months, and years.";
 ?>
 
 <!doctype html>
@@ -68,7 +70,7 @@ $page_description = "See what you wrote on this day in past weeks, months, and y
                 <h2><?php echo $heading; ?> you wrote...</h2>
                 <?php foreach ($entryList as $entry): ?>
                     <article>
-                        <h3><?php echo date('d F Y \a\t H:i', strtotime($entry['timestamp'])); ?></h3>
+                        <h3><?php echo formatTimestampForLocal($entry['timestamp']); ?></h3>
                         <div><?php echo $Parsedown->text($entry['content']); ?></div>
                         <p><strong>Mood:</strong> <?php echo htmlspecialchars($entry['mood']); ?></p>
                         <p><strong>Tags:</strong> 
