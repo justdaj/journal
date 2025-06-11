@@ -138,6 +138,7 @@ $totalPages = ceil($totalEntries / $limit);
         <?php endif; ?>
     </main>
 
+    <?php include 'footer.php'; ?>
     <script src="scripts.js"></script>
 </body>
 </html>

@@ -98,5 +98,7 @@ $page_description = "See what you wrote on this day in past weeks, months, and y
         <?php endif; ?>
     </main>
 
+    <?php include 'footer.php'; ?>
+
 </body>
 </html>

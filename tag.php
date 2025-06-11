@@ -85,5 +85,7 @@ $page_description = "Journal entries tagged as '" . htmlspecialchars($tag) . "'"
         </nav>
 
     </main>
+
+    <?php include 'footer.php'; ?>
 </body>
 </html>
