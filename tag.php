@@ -32,16 +32,9 @@ $page_description = "Journal entries tagged as '" . htmlspecialchars($tag) . "'"
 
 <!doctype html>
 <html lang="en-GB">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
 
-    <title><?php echo $page_title; ?></title>
-    <meta name="description" content="<?php echo $page_description; ?>">
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-    <link rel="stylesheet" href="custom.css">
-</head>
+<?php include 'head.php'; ?>
+
 <body>
     <header>
         <h1><?php echo $page_title; ?></h1>
