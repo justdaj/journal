@@ -88,7 +88,7 @@ $totalPages = ceil($totalEntries / $limit);
                 <h2><?php echo formatTimestampForLocal($entry['timestamp']); ?></h2>
                     <div><?php echo $Parsedown->text($entry['content']); ?></div>
                     <p><strong>Mood:</strong> <?php echo htmlspecialchars($entry['mood']); ?></p>
-                    <p><strong>Tags:</strong> 
+                    <p><strong>Tag(s):</strong> 
                         <?php 
                         if (!empty($entry['tags'])) {
                             $tags = explode(',', $entry['tags']);
