@@ -12,5 +12,5 @@
     <meta name="theme-color" content="#000000">
 
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-    <link rel="stylesheet" href="custom.css">
+    <link rel="stylesheet" href="style.css">
 </head>

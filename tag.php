@@ -41,7 +41,8 @@ $page_description = "Journal entries tagged as '" . htmlspecialchars($tag) . "'"
     <header>
         <h1><?php echo $page_title; ?></h1>
         <p><?php echo $page_description; ?></p>
-        <nav><a href="index.php">Back to journal</a></nav>
+        
+        <?php include 'nav.php'; ?>
     </header>
     <main>
         <?php if (empty($entries)): ?>

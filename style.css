@@ -114,13 +114,13 @@ h2 {
     justify-content: flex-end;
 }
 
-ul.mood-count {
+ul.third-count {
   list-style-type: none;
   padding: 0;
   text-align: center;
 }
 
-ul.mood-count li {
+ul.third-count li {
   display: inline-block;
   margin: 0.5rem 0.25rem;
   padding: 8px;
@@ -129,9 +129,97 @@ ul.mood-count li {
   background: var(--accent-bg);
 }
 
-ul.mood-count li span {
+ul.third-count li span {
   display: inline-block;
   padding: 0.25rem 0.5rem;
+  background: var(--accent);
+  border-radius: var(--standard-border-radius);
+  color: var(--bg);
+}
+
+.center {
+    text-align: center;
+}
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.stats-grid > .card {
+  display: flex;
+  flex: 1 1 150px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.stats-grid > .card.third {
+  flex: 0 1 calc(33.333% - 1rem);
+  max-width: calc(33.333% - 1rem);
+  box-sizing: border-box;
+}
+
+.stats-grid > .card.half {
+  flex: 0 1 calc(50% - 1rem);
+  max-width: calc(50% - 1rem);
+  box-sizing: border-box;
+}
+
+@media (max-width:640px) {
+  .stats-grid {
+    display: block;
+  }
+  .stats-grid > .card {
+    margin: 1rem auto;
+  }
+  .stats-grid > .card.third,
+  .stats-grid > .card.half {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+}
+
+.card {
+    padding: 1rem;
+    background: var(--accent-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--standard-border-radius);
+}
+
+.card h3 {
+    margin: 0 0 0.25rem 0;
+}
+
+h3.stats-tags {
+    font-size: 1.6rem;
+    margin: 1.5rem 0 -1rem 0;
+}
+
+.card p {
+    margin: 0;
+}
+
+ul.counter {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul.counter li {
+  display: inline-block;
+  margin: 0.5rem 0.25rem;
+  padding: 6px 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--standard-border-radius);
+  background: var(--accent-bg);
+}
+
+ul.counter li span {
+  padding: 2px 6px;
   background: var(--accent);
   border-radius: var(--standard-border-radius);
   color: var(--bg);

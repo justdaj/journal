@@ -47,7 +47,8 @@ $totalPages = ceil($totalEntries / $limit);
     <header>
         <h1><?php echo htmlspecialchars($page_title); ?></h1>
         <p><?php echo htmlspecialchars($page_description); ?></p>
-        <nav><a href="on-this-day.php">On this day...</a></nav>
+        
+        <?php include 'nav.php'; ?>
     </header>
     <main>
         <form method="POST" action="index.php">
@@ -63,6 +64,7 @@ $totalPages = ceil($totalEntries / $limit);
                         <option value="😏 Neutral" selected>😏 Neutral</option>
                         <option value="😡 Angry">😡 Angry</option>
                         <option value="🤪 Excited">🤪 Excited</option>
+                        <option value="😰 Anxious">😰 Anxious</option>
                     </select>
                 </div>
 

@@ -74,13 +74,14 @@ arsort($moodCounts);
     <header>
         <h1><?php echo $page_title; ?></h1>
         <p><?php echo $page_description; ?></p>
-        <nav><a href="index.php">Back to journal</a></nav>
+        
+        <?php include 'nav.php'; ?>
     </header>
     <main>
         <?php if (!empty($moodCounts)): ?>
             <section>
                 <h2>Here's how you felt during this period:</h2>
-                <ul class="mood-count">
+                <ul class="counter">
                     <?php foreach ($moodCounts as $mood => $count): ?>
                         <li><?php echo htmlspecialchars($mood); ?> <span>&times;<?php echo $count; ?></span></li>
                     <?php endforeach; ?>

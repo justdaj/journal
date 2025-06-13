@@ -8,7 +8,14 @@ $db->exec("CREATE TABLE IF NOT EXISTS entries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
     content TEXT NOT NULL,
-    mood TEXT CHECK( mood IN ('🙃 Happy', '😞 Sad', '😏 Neutral', '😡 Angry', '🤪 Excited') )
+    mood TEXT CHECK( mood IN (
+        '🙃 Happy',
+        '😞 Sad',
+        '😏 Neutral',
+        '😡 Angry',
+        '🤪 Excited',
+        '😰 Anxious'
+    ))
 );
 
 CREATE TABLE IF NOT EXISTS tags (
