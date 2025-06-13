@@ -224,3 +224,7 @@ ul.counter li span {
   border-radius: var(--standard-border-radius);
   color: var(--bg);
 }
+
+input[name="q"] {
+  width: 100%;
+}

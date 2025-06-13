@@ -165,3 +165,7 @@ function formatTimestampForLocal(string $timestamp): string {
     $dt->setTimezone(new DateTimeZone($config['timezone']));
     return $dt->format('d F Y \a\t H:i');
 }
+
+function getDb(): PDO {
+    return new PDO('sqlite:journal.db');
+}

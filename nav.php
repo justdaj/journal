@@ -2,6 +2,7 @@
 $navItems = [
     'index.php' => 'Journal',
     'on-this-day.php' => 'On This Day',
+    'search.php' => '🔍️ Search',
     'stats.php' => 'Stats'
 ];
 
