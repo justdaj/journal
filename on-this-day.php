@@ -51,18 +51,6 @@ $entries = [
     'On this day in previous years' => $previousYears
 ];
 
-// Count moods
-$moodCounts = [];
-foreach ($entries as $group) {
-    foreach ($group as $entry) {
-        $mood = $entry['mood'] ?? 'Unknown';
-        if (!isset($moodCounts[$mood])) {
-            $moodCounts[$mood] = 0;
-        }
-        $moodCounts[$mood]++;
-    }
-}
-arsort($moodCounts);
 ?>
 
 <!doctype html>
@@ -78,17 +66,6 @@ arsort($moodCounts);
         <?php include 'nav.php'; ?>
     </header>
     <main>
-        <?php if (!empty($moodCounts)): ?>
-            <section>
-                <h2>Here's how you felt during this period:</h2>
-                <ul class="counter">
-                    <?php foreach ($moodCounts as $mood => $count): ?>
-                        <li><?php echo htmlspecialchars($mood); ?> <span>&times;<?php echo $count; ?></span></li>
-                    <?php endforeach; ?>
-                </ul>
-            </section>
-        <?php endif; ?>
-
         <?php foreach ($entries as $heading => $entryList): ?>
             <?php if (!empty($entryList)): // Only show the heading if there are entries ?>
                 <h2><?php echo $heading; ?> you wrote...</h2>
