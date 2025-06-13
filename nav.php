@@ -1,9 +1,9 @@
 <?php
 $navItems = [
-    'index.php' => 'Journal',
-    'on-this-day.php' => 'On This Day',
+    'index.php' => '🏠️ Journal',
+    'on-this-day.php' => '📅 On This Day',
     'search.php' => '🔍️ Search',
-    'stats.php' => 'Stats'
+    'stats.php' => '📊 Stats'
 ];
 
 $currentPage = basename($_SERVER['PHP_SELF']);
