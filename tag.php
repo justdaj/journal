@@ -1,9 +1,5 @@
 <?php
-$config = require 'config.php';
-date_default_timezone_set($config['timezone']);
-require 'functions.php';
-require 'Parsedown.php';
-$Parsedown = new Parsedown();
+require 'bootstrap.php';
 
 $tag = $_GET['tag'] ?? '';
 

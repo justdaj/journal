@@ -1,11 +1,5 @@
 <?php
-$config = require 'config.php';
-$page_title = $config['page_title'];
-$page_description = $config['page_description'];
-date_default_timezone_set($config['timezone']);
-require 'functions.php';
-require 'Parsedown.php';
-$Parsedown = new Parsedown();
+require 'bootstrap.php';
 
 // Get today's date
 $today = date('Y-m-d');

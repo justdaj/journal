@@ -1,11 +1,7 @@
 <?php
-$config = require 'config.php';
 $page_title = "Search Journal";
 $page_description = "Find entries containing keywords.";
-date_default_timezone_set($config['timezone']);
-require 'functions.php';
-require 'Parsedown.php';
-$Parsedown = new Parsedown();
+require 'bootstrap.php';
 
 $db = getDb();
 $searchResults = [];

@@ -225,6 +225,23 @@ ul.counter li span {
   color: var(--bg);
 }
 
-input[name="q"] {
+input {
   width: 100%;
+}
+
+.login {
+  background: var(--accent-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--standard-border-radius);
+  padding: 2rem;
+  margin: 3rem auto;
+  max-width: 600px;
+}
+
+.login h1 {
+  margin: 0 0 1rem 0;
+}
+
+.login p {
+  margin-top: 0;
 }

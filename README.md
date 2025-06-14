@@ -22,19 +22,42 @@ The hosting requirements are *extremely* simple. All that is needed is PHP suppo
 
 ## Getting started
 
-1. Fork or download the project
-2. Upload the project to your hosting provider
-3. Enjoy!
+1. Fork or download the project.
+2. Upload the project to your hosting provider.
+3. Complete the settings in config.php.
+4. Enjoy!
 
 Even though *Journal* requires SQLite, no configuration is needed. If no existing database is detected, then a new one will be automatically created when you publish your first entry.
 
-## Note on security
+## Setting up the config file
 
-There is currently no security in place to protect your journal from public eyes. So you will need to either put it behind some access control rules, so only certain IP addresses can access it, or put the entire site within a password protected directory.
+There are 4 simple options to complete in the config file:
 
-Most hosting providers offer password protected directories, so it should be straightforward to setup.
+1. The title of your Journal.
+2. The Journal's description (this will be shown under the title within the site header).
+3. Your timezone.
+4. Your username & password for authentication.
 
-Alternatively, the most secure method would be to not expose your Journal to the internet, and just run it locally.
+1 & 2 are pretty straightforward, so I won't go into detail on them. To setup your timezone, find the correct one for your location from [this list](https://www.php.net/manual/en/timezones.php), then replace `Europe/London` within the config.
+
+### Setting up authentication
+
+This is still very simple, but requires a little more work as you can't just put the password in ths config file in plaintext - that wouldn't be very secure now would it. Instead we use a [hash function](https://en.wikipedia.org/wiki/Hash_function) to obfuscate the password. You can do this in a couple of ways. If you have PHP installed on your local machine, run the following command replacing `your-secure-password` with whatever you want you password to be:
+
+```
+php -r "echo password_hash('your-secure-password', PASSWORD_DEFAULT) . PHP_EOL;"
+```
+
+This command you output something like this, which is your password hash:
+
+```
+$2y$10$w17iaaeoqfn96w9jlFK3t.NdltDqVcndArseVoPaWjKrbBe4wngSy
+```
+
+All you need to do then is paste this hash in the config file, replacing `your-password-hash`. Your Journal should then accept whatever password you set.
+
+Alternatively, if you don't have PHP installed, or you aren't comfortable in the command line, you can use [this online tool](https://codeshack.io/php-password-hash-generator/) to generate the hash for you. Just leave the settings as default (BCRYPT & 12), type in your password and git the generate button.
+
 
 ## Roadmap
 
