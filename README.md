@@ -15,6 +15,9 @@ Here's the features that are currently supported in *Journal*:
 * Ability to delete entries.
 * Entry pagination.
 * An *On This Day* page that allows you to look back at previous entries from a week, month, and previous years.
+* A stats page that shows numbers of entries, as well as entries by mood and tag.
+* Full text search.
+* And authentication system to keep your Journal private.
 
 ## Demo
 
