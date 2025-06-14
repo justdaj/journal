@@ -61,8 +61,4 @@ Alternatively, if you don't have PHP installed, or you aren't comfortable in the
 
 ## Roadmap
 
-*Journal* is pretty much feature complete at this point, as it does everything I need it to. I *might* add an option to search entries in the future, but I'm not sure how valuable that would be for my use case.
-
-## Note on the code
-
-This was never designed to be a public project. There's a lot of spaghetti code here, but it works, so it's good enough for me. I'll probably look at cleaning it up at some point, but for now, I'm happy with it.
+*Journal* is pretty much feature complete at this point, as it does everything I need it to. I *might* add additional features in the future, but this project is driven by *my* needs. If there's a feature you'd like me to add, please [submit an issue](https://github.com/kevquirk/journal/issues) and I'll consider it.
