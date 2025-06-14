@@ -16,6 +16,14 @@ Here's the features that are currently supported in *Journal*:
 * Entry pagination.
 * An *On This Day* page that allows you to look back at previous entries from a week, month, and previous years.
 
+## Demo
+
+Journal has been deliberately designed to be clean, basic and simple to use. Here is what it looks like:
+
+![screenshot](https://github.com/user-attachments/assets/09b0746b-e632-41be-be3b-0da7a7ceea37)
+
+If have also setup a full demo of *Journal* so you can get an idea of what it looks like and how it works. [You can view the demo here](https://journal-demo.kevquirk.com).
+
 ## Hosting requirement
 
 The hosting requirements are *extremely* simple. All that is needed is PHP support and SQLite, both of which are available with most hosting providers.
