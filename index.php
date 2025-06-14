@@ -1,6 +1,8 @@
 <?php
 require 'bootstrap.php';
 
+$success_message = '';
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['content'])) {
     $content = trim($_POST['content']);

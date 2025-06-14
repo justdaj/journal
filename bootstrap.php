@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 $config = require __DIR__ . '/config.php';
 
 require_once __DIR__ . '/functions.php';
@@ -8,8 +6,10 @@ require_once __DIR__ . '/Parsedown.php';
 
 // Prevent session hijacking
 ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_secure', 1); // only if HTTPS
+ini_set('session.cookie_secure', 1);
 ini_set('session.use_strict_mode', 1);
+
+session_start();
 
 // Only enforce login if we're not on login.php
 if (!str_contains($_SERVER['SCRIPT_NAME'], 'login.php')) {
