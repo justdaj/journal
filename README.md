@@ -69,7 +69,10 @@ All you need to do then is paste this hash in the config file, replacing `your-p
 
 Alternatively, if you don't have PHP installed, or you aren't comfortable in the command line, you can use [this online tool](https://codeshack.io/php-password-hash-generator/) to generate the hash for you. Just leave the settings as default (BCRYPT & 12), type in your password and git the generate button.
 
-
 ## Roadmap
 
 *Journal* is pretty much feature complete at this point, as it does everything I need it to. I *might* add additional features in the future, but this project is driven by *my* needs. If there's a feature you'd like me to add, please [submit an issue](https://github.com/kevquirk/journal/issues) and I'll consider it.
+
+## No warranty
+
+Please note that this was always designed to be a personal project to help me learn PHP. If you decide to self-host a copy of *Journal* is comes with no warranty whatsoever and I can't be held liable for any issues as a result of using this software.
