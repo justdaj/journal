@@ -75,4 +75,4 @@ Alternatively, if you don't have PHP installed, or you aren't comfortable in the
 
 ## No warranty
 
-Please note that this was always designed to be a personal project to help me learn PHP. If you decide to self-host a copy of *Journal* is comes with no warranty whatsoever and I can't be held liable for any issues as a result of using this software.
+Please note that this was always designed to be a personal project to help me learn PHP. If you decide to self-host a copy of *Journal* it comes with no warranty whatsoever and I can't be held liable for any issues as a result of using this software.
