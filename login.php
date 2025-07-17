@@ -15,20 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_regenerate_id(true);
         $_SESSION['logged_in'] = true;
 
-        // Handle "Remember Me"
-        if (isset($_POST['remember']) && $_POST['remember'] === '1') {
-            $token = bin2hex(random_bytes(32));
-            file_put_contents(__DIR__ . '/remember_token.txt', $token);
-
-            setcookie('remember_token', $token, [
-                'expires' => time() + (86400 * 30),
-                'path' => '/',
-                'secure' => isset($_SERVER['HTTPS']),
-                'httponly' => true,
-                'samesite' => 'Strict',
-            ]);
-        }
-
         header('Location: /');
         exit;
     } else {
@@ -57,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p>
                     <label class="hidden" for="password">Password</label>
                     <input type="password" name="password" id="password" placeholder="Password" required><br>
-                    <label><input type="checkbox" name="remember" value="1">Remember me</label>
                 </p>
 
                 <button type="submit">Log in</button>

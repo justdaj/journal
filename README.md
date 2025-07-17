@@ -76,3 +76,7 @@ Alternatively, if you don't have PHP installed, or you aren't comfortable in the
 ## No warranty
 
 Please note that this was always designed to be a personal project to help me learn PHP. If you decide to self-host a copy of *Journal* it comes with no warranty whatsoever and I can't be held liable for any issues as a result of using this software.
+
+## Thanks
+
+Finally, I'd like to thank [Martijn van der Ven](https://vanderven.se/martijn/) for reporting some critical security bug that I was able to fix.
