@@ -133,9 +133,18 @@ function updateEntry($id, $content, $mood, $tags) {
 // Function to delete an entry
 function deleteEntry($id) {
     global $db;
-
+    // Remove the entry
     $stmt = $db->prepare("DELETE FROM entries WHERE id = :id");
     $stmt->execute([':id' => $id]);
+
+    // Remove all tags associated with the entry
+    $stmt = $db->prepare("DELETE FROM entry_tags WHERE entry_id = :id");
+    $stmt->execute([':id' => $id]);
+    
+    //Remove the tag(s) if not used elsewhere
+    $stmt = $db->prepare("DELETE FROM tags as t  
+        WHERE NOT EXISTS (select et.tag_id FROM entry_tags AS et WHERE et.tag_id = t.id)");
+    $stmt->execute();
 }
 
 // Function to retrieve entries by tag
