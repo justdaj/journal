@@ -155,7 +155,7 @@ function getEntriesByTag($tag, $limit = 10, $offset = 0) {
                           FROM entries e 
                           JOIN entry_tags et ON e.id = et.entry_id 
                           JOIN tags t ON et.tag_id = t.id 
-                          WHERE t.name = :tag 
+                          WHERE lower(t.name) = :tag 
                           GROUP BY e.id ORDER BY e.timestamp DESC 
                           LIMIT :limit OFFSET :offset");
 

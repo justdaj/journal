@@ -1,7 +1,7 @@
 <?php
 require 'bootstrap.php';
 
-$tag = $_GET['tag'] ?? '';
+$tag = strtolower($_GET['tag']) ?? '';
 
 if (!$tag) {
     die('Tag not specified.');
@@ -19,7 +19,7 @@ global $db;
 $totalEntries = $db->prepare("SELECT COUNT(DISTINCT e.id) FROM entries e 
                               JOIN entry_tags et ON e.id = et.entry_id 
                               JOIN tags t ON et.tag_id = t.id 
-                              WHERE t.name = :tag");
+                              WHERE lower(t.name) = :tag");
 $totalEntries->execute([':tag' => $tag]);
 $totalEntries = $totalEntries->fetchColumn();
 $totalPages = ceil($totalEntries / $limit);
