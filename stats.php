@@ -1,9 +1,6 @@
 <?php
 require 'bootstrap.php';
 
-// Database connection
-$db = new PDO('sqlite:journal.db');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Total entries
 $totalEntries = $db->query("SELECT COUNT(*) FROM entries")->fetchColumn();
