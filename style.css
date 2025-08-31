@@ -36,6 +36,10 @@ button.delete:hover {
     border-color:   #900C3F;
 }
 
+button.edit {
+  margin-right: 0.5rem;
+}
+
 @media (prefers-color-scheme: dark) {
     button.delete {
         background-color: red;

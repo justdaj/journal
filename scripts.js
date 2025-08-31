@@ -14,3 +14,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function startEdit(btn) {
+  const id      = btn.dataset.id || '';
+  const content = btn.dataset.content || '';
+  const mood    = btn.dataset.mood || '😏 Neutral';
+  const tagsCsv = btn.dataset.tags || '';
+
+  const form = document.getElementById('entry-form');
+  form.querySelector('#entry-id').value = id;
+  form.querySelector('#content').value  = content;
+  form.querySelector('#mood').value     = mood;
+  form.querySelector('#tags').value     = tagsCsv.split(',').map(s => s.trim()).filter(Boolean).join(', ');
+
+  // Optional: change the button label to make it obvious
+  const saveBtn = form.querySelector('button[name="save_entry"]');
+  if (saveBtn) saveBtn.textContent = 'Update entry';
+
+  // Scroll to the form and focus
+  document.getElementById('content').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}

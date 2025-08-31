@@ -3,21 +3,25 @@ require 'bootstrap.php';
 
 $success_message = '';
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['content'])) {
-    $content = trim($_POST['content']);
-    $mood = $_POST['mood'] ?? '😏 Neutral';
-    $tags = !empty($_POST['tags']) ? array_map('trim', explode(',', $_POST['tags'])) : [];
-    
-    addEntry($content, $mood, $tags);
-    $success_message = '<p>Entry saved successfully!</p>';
-}
+// Handle create or update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_entry'])) {
+    $id      = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+    $content = trim($_POST['content'] ?? '');
+    $mood    = $_POST['mood'] ?? '😏 Neutral';
+    $tags    = !empty($_POST['tags']) ? array_map('trim', explode(',', $_POST['tags'])) : [];
 
-// Handle entry deletion
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
-    deleteEntry($_POST['delete_id']);
-    header('Location: index.php'); // Prevent form resubmission issues
-    exit;
+    if ($content === '') {
+        $success_message = '<p>Content cannot be empty.</p>';
+    } else {
+        if ($id > 0) {
+            updateEntry($id, $content, $mood, $tags);
+            header('Location: index.php?notice=' . urlencode('Entry updated.'));
+        } else {
+            addEntry($content, $mood, $tags);
+            header('Location: index.php?notice=' . urlencode('Entry saved.'));
+        }
+        exit;
+    }
 }
 
 // Pagination
@@ -47,7 +51,10 @@ $totalPages = ceil($totalEntries / $limit);
         <?php include 'nav.php'; ?>
     </header>
     <main>
-        <form method="POST" action="index.php">
+        <form method="POST" action="index.php" id="entry-form">
+            <!-- hidden id, blank for new entries, filled when editing -->
+            <input type="hidden" name="id" id="entry-id" value="">
+
             <label class="hidden" for="content">Journal Entry</label>
             <textarea id="content" rows="6" name="content" required autofocus placeholder="Today I..."></textarea>
             
@@ -70,9 +77,13 @@ $totalPages = ceil($totalEntries / $limit);
                 </div>
             </div>
             
-            <button type="submit">Save entry</button>
+            <button type="submit" name="save_entry" id="save-button">Save entry</button>
             <?php echo $success_message; ?>
+            <?php if (!empty($_GET['notice'])): ?>
+                <p><?php echo htmlspecialchars($_GET['notice']); ?></p>
+            <?php endif; ?>
         </form>
+
 
         <hr>
 
@@ -96,6 +107,16 @@ $totalPages = ceil($totalEntries / $limit);
                         ?>
                     </p>
                     <div class="delete-container">
+                        <button
+                            type="button"
+                            class="edit"
+                            onclick="startEdit(this)"
+                            data-id="<?php echo (int)$entry['id']; ?>"
+                            data-content="<?php echo htmlspecialchars($entry['content'], ENT_QUOTES); ?>"
+                            data-mood="<?php echo htmlspecialchars($entry['mood'], ENT_QUOTES); ?>"
+                            data-tags="<?php echo htmlspecialchars($entry['tags'] ?? '', ENT_QUOTES); ?>">
+                            Edit
+                        </button>
                         <form method="POST" action="index.php" onsubmit="return confirm('Are you sure you want to delete this entry?');">
                             <input type="hidden" name="delete_id" value="<?php echo $entry['id']; ?>">
                             <button class="delete" type="submit">Delete</button>
