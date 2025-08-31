@@ -49,7 +49,7 @@ $totalPages = ceil($totalEntries / $limit);
     <main>
         <form method="POST" action="index.php">
             <label class="hidden" for="content">Journal Entry</label>
-            <textarea id="content" rows="6" name="content" required placeholder="Today I..."></textarea>
+            <textarea id="content" rows="6" name="content" required autofocus placeholder="Today I..."></textarea>
             
             <div class="inline">
                 <div>

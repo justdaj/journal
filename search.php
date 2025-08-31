@@ -43,7 +43,7 @@ if (!empty($query)) {
                 name="q" 
                 value="<?php echo htmlspecialchars($q); ?>" 
                 placeholder="e.g. kids, work, holiday..." 
-                required>
+                required autofocus>
             <button type="submit">Search</button>
         </form>
 
