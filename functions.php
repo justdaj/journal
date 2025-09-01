@@ -16,6 +16,7 @@ function getDb(): PDO {
 
     $db = new PDO('sqlite:' . $db_path);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->exec('PRAGMA foreign_keys = ON'); // honour FK constraints
 
     if (!$db_exists) {
         $db->exec("CREATE TABLE IF NOT EXISTS entries (
@@ -49,12 +50,18 @@ function getDb(): PDO {
     return $db;
 }
 
-// Function to add an entry
-function addEntry($content, $mood, $tags) {
+// Function to add an entry (optionally with explicit UTC timestamp)
+function addEntry($content, $mood, $tags, $timestampUtc = null) {
     global $db;
 
-    $stmt = $db->prepare("INSERT INTO entries (content, mood) VALUES (:content, :mood)");
-    $stmt->execute([':content' => $content, ':mood' => $mood]);
+    if ($timestampUtc) {
+        $stmt = $db->prepare("INSERT INTO entries (timestamp, content, mood) VALUES (:ts, :content, :mood)");
+        $stmt->execute([':ts' => $timestampUtc, ':content' => $content, ':mood' => $mood]);
+    } else {
+        $stmt = $db->prepare("INSERT INTO entries (content, mood) VALUES (:content, :mood)");
+        $stmt->execute([':content' => $content, ':mood' => $mood]);
+    }
+
     $entryId = $db->lastInsertId();
 
     foreach ($tags as $tag) {
@@ -65,8 +72,10 @@ function addEntry($content, $mood, $tags) {
         $stmt->execute([':name' => $tag]);
         $tagId = $stmt->fetchColumn();
 
-        $stmt = $db->prepare("INSERT INTO entry_tags (entry_id, tag_id) VALUES (:entry_id, :tag_id)");
-        $stmt->execute([':entry_id' => $entryId, ':tag_id' => $tagId]);
+        if ($tagId) {
+            $stmt = $db->prepare("INSERT INTO entry_tags (entry_id, tag_id) VALUES (:entry_id, :tag_id)");
+            $stmt->execute([':entry_id' => $entryId, ':tag_id' => $tagId]);
+        }
     }
 }
 
@@ -102,18 +111,25 @@ function getEntryById($id) {
                           FROM entries e 
                           LEFT JOIN entry_tags et ON e.id = et.entry_id 
                           LEFT JOIN tags t ON et.tag_id = t.id 
-                          WHERE e.id = :id GROUP BY e.id");
+                          WHERE e.id = :id 
+                          GROUP BY e.id");
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// Function to update an entry
-function updateEntry($id, $content, $mood, $tags) {
+// Function to update an entry (optionally with explicit UTC timestamp)
+function updateEntry($id, $content, $mood, $tags, $timestampUtc = null) {
     global $db;
 
-    $stmt = $db->prepare("UPDATE entries SET content = :content, mood = :mood WHERE id = :id");
-    $stmt->execute([':content' => $content, ':mood' => $mood, ':id' => $id]);
+    if ($timestampUtc) {
+        $stmt = $db->prepare("UPDATE entries SET content = :content, mood = :mood, timestamp = :ts WHERE id = :id");
+        $stmt->execute([':content' => $content, ':mood' => $mood, ':ts' => $timestampUtc, ':id' => $id]);
+    } else {
+        $stmt = $db->prepare("UPDATE entries SET content = :content, mood = :mood WHERE id = :id");
+        $stmt->execute([':content' => $content, ':mood' => $mood, ':id' => $id]);
+    }
 
+    // Reset tags for the entry
     $stmt = $db->prepare("DELETE FROM entry_tags WHERE entry_id = :id");
     $stmt->execute([':id' => $id]);
 
@@ -125,29 +141,28 @@ function updateEntry($id, $content, $mood, $tags) {
         $stmt->execute([':name' => $tag]);
         $tagId = $stmt->fetchColumn();
 
-        $stmt = $db->prepare("INSERT INTO entry_tags (entry_id, tag_id) VALUES (:entry_id, :tag_id)");
-        $stmt->execute([':entry_id' => $id, ':tag_id' => $tagId]);
+        if ($tagId) {
+            $stmt = $db->prepare("INSERT INTO entry_tags (entry_id, tag_id) VALUES (:entry_id, :tag_id)");
+            $stmt->execute([':entry_id' => $id, ':tag_id' => $tagId]);
+        }
     }
 }
 
 // Function to delete an entry
 function deleteEntry($id) {
     global $db;
-    // Remove the entry
+
+    // Remove the entry (FK cascade will clear entry_tags)
     $stmt = $db->prepare("DELETE FROM entries WHERE id = :id");
     $stmt->execute([':id' => $id]);
 
-    // Remove all tags associated with the entry
-    $stmt = $db->prepare("DELETE FROM entry_tags WHERE entry_id = :id");
-    $stmt->execute([':id' => $id]);
-    
-    //Remove the tag(s) if not used elsewhere
-    $stmt = $db->prepare("DELETE FROM tags as t  
-        WHERE NOT EXISTS (select et.tag_id FROM entry_tags AS et WHERE et.tag_id = t.id)");
+    // Tidy any tags no longer referenced
+    $stmt = $db->prepare("DELETE FROM tags AS t
+        WHERE NOT EXISTS (SELECT 1 FROM entry_tags AS et WHERE et.tag_id = t.id)");
     $stmt->execute();
 }
 
-// Function to retrieve entries by tag
+// Function to retrieve entries by tag (case-insensitive)
 function getEntriesByTag($tag, $limit = 10, $offset = 0) {
     global $db;
 
@@ -156,10 +171,11 @@ function getEntriesByTag($tag, $limit = 10, $offset = 0) {
                           JOIN entry_tags et ON e.id = et.entry_id 
                           JOIN tags t ON et.tag_id = t.id 
                           WHERE lower(t.name) = :tag 
-                          GROUP BY e.id ORDER BY e.timestamp DESC 
+                          GROUP BY e.id 
+                          ORDER BY e.timestamp DESC 
                           LIMIT :limit OFFSET :offset");
 
-    $stmt->bindValue(':tag', $tag, PDO::PARAM_STR);
+    $stmt->bindValue(':tag', strtolower($tag), PDO::PARAM_STR);
     $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
     $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
     $stmt->execute();
