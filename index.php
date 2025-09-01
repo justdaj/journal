@@ -157,6 +157,6 @@ $totalPages = ceil($totalEntries / $limit);
     </main>
 
     <?php include 'footer.php'; ?>
-    <script src="scripts.js"></script>
+    <script src="scripts.js?<?= filemtime("scripts.js");?>"></script>
 </body>
 </html>
