@@ -26,24 +26,39 @@ pre {
     white-space: pre-wrap;
 }
 
+.delete-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
 button.delete {
-    background-color: #C70039;
+    background-color: var(--bg);
     border-color:  #C70039;
+    color: #C70039;
 }
 
 button.delete:hover {
-    background-color:  #900C3F;
-    border-color:   #900C3F;
+    background-color:  #C70039;
+    border-color: #C70039;
+    color: white;
 }
 
 button.edit {
-  margin-right: 0.5rem;
+    background-color: var(--bg);
+    color: var(--accent);
+}
+
+button.edit:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
 }
 
 @media (prefers-color-scheme: dark) {
     button.delete {
-        background-color: red;
-        border-color:  red;
+        border-color:  crimson;
+        color: crimson;
     }
 
     button.delete:hover {
@@ -111,11 +126,6 @@ h2 {
 
 .tag-cloud a::before {
     content: "#";
-}
-
-.delete-container {
-    display: flex;
-    justify-content: flex-end;
 }
 
 ul.third-count {
