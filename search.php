@@ -41,7 +41,7 @@ if (!empty($query)) {
                 type="text" 
                 id="search" 
                 name="q" 
-                value="<?php echo htmlspecialchars($q); ?>" 
+                value="<?php echo htmlspecialchars($query); ?>" 
                 placeholder="e.g. kids, work, holiday..." 
                 required autofocus>
             <button type="submit">Search</button>
