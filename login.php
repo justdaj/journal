@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         session_regenerate_id(true);
         $_SESSION['logged_in'] = true;
 
-        header('Location: /');
+        header('Location: index.php');
         exit;
     } else {
         header('Location: login.php?error=Invalid+credentials');
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="post" action="login.php">
                 <p>
                     <label class="hidden" for="username">Username</label>
-                    <input type="text" name="username" id="username" placeholder="Username" required>
+                    <input type="text" name="username" id="username" placeholder="Username" required autofocus>
                 </p>
 
                 <p>
