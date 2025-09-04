@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_entry'])) {
         if ($config['date_only'] == True && $id ==0) {
             $data = getEntryByDate($date);
             if ($data['id'] != '0')  {
-                $content = $data['content'] . "\n\n" . $content;
+                $prev_mood = ($data['mood']!='' ? '**Mood:** '. $data['mood']. "\n\n ---" : '');
+                $content = $data['content'] . "\n\n" . $prev_mood . "\n" . $content;
                 $tags = array_filter(array_merge($data['tags'], $tags));
             }
             $id = $data['id'];
